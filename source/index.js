@@ -2,8 +2,8 @@ var staffList = [];
 
 var mode = "create";
 function checkMode() {
-  if (mode === "create") createStaff();
-  if (mode === "update") updateStaff();
+  if (mode === "create") return createStaff();
+  if (mode === "update") return   updateStaff();
 }
 
 function createStaff() {
@@ -101,8 +101,8 @@ function renderHtml(data) {
             <td>${data[i].calcTotalSalary()}</td>
             <td>${data[i].classifiStaff()}</td>
             <td> 
-            <button type="button" id="btnUpdate" onclick="getUpdate()"  class="btn btn-light border border-dark" data-target="#myModal" data-toggle="modal"><i class="fa-regular fa-pen-to-square" style="color: #000;"></i></button>   
-            <button type="button" onclick="deleteStaff()" class="btn btn-danger border border-dark mt-1  "><i class="fa-solid fa-trash-can" style="color: #000;"></i></button>
+            <button type="button" id="btnUpdate" onclick="getUpdate('${data[i].staffId}')"  class="btn btn-light border border-dark" data-target="#myModal" data-toggle="modal"><i class="fa-regular fa-pen-to-square" style="color: #000;"></i></button>   
+            <button type="button" onclick="deleteStaff('${data[i].staffId}')" class="btn btn-danger border border-dark mt-1  "><i class="fa-solid fa-trash-can" style="color: #000;"></i></button>
             </td>
         </tr>`;
   }
@@ -181,18 +181,18 @@ function updateStaff() {
 
   var index = findStaffById(id);
   var staff = staffList[index];
-  staff.id = id;
-  staff.fullName = fullName;
-  staff.email = email;
-  staff.dow = dow;
+  staff.staffId = id;
+  staff.staffName = fullName;
+  staff.staffEmail = email;
+  staff.staffPass = pass;
   staff.salary = salary;
   staff.positon = positon;
   staff.hourOfWork = hourOfWork;
-  staff.pass = pass;
+  staff.staffDow = dow;
 
   renderHtml();
   saveLocal();
-  console.log(mode)
+  
   cancelUpdate();
 }
 
@@ -211,7 +211,7 @@ function cancelUpdate() {
 function findStaffById(id) {
   // input: id => output: index của staff trong mảng
   for (var i = 0; i < staffList.length; i++) {
-    if (staffList[i].id === id) {
+    if (staffList[i].staffId === id) {
       return i;
     }
   }
