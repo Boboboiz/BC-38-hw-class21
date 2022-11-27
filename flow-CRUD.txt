@@ -4,3 +4,11 @@ tạo function delete truyền id => lấy index dựa theo find staff -> splice
 
 tạo function getupdate -> fill thông tin ngược lên form -> chuyển nút -> thêm cancel -> chuyển mode
 tạo function do update -> nhận mode update từ get -> cho user edit form -> lưu local
+
+-> chuyển onclick create thành onlcik chuyển mode **
+
+search (e) truyển vào oninput(event) để bắt sự kiện tìm kiếm
+
+validation
+ 
+tạo 3 function required, max/min lenght , pattern  (val, config)

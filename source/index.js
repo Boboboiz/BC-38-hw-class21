@@ -3,11 +3,12 @@ var staffList = [];
 var mode = "create";
 function checkMode() {
   if (mode === "create") return createStaff();
-  if (mode === "update") return   updateStaff();
+  if (mode === "update") return updateStaff();
 }
 
 function createStaff() {
   // Dom lấy input
+  if (!validateForm()) return;
 
   var id = document.getElementById("tknv").value;
   var fullName = document.getElementById("name").value;
@@ -24,14 +25,14 @@ function createStaff() {
       return alert("Id đã tồn tại - Vui lòng nhập lại");
   }
 
-  // tạo objec staff
+  // tạo objec staff ( truyền input zo object)
 
   var staff = new Staff(
     id,
     fullName,
     email,
-    pass,
     dow,
+    pass,
     salary,
     positon,
     hourOfWork
@@ -44,7 +45,6 @@ function createStaff() {
   renderHtml();
 
   saveLocal();
-  
 }
 
 /** Savelocal */
@@ -101,8 +101,12 @@ function renderHtml(data) {
             <td>${data[i].calcTotalSalary()}</td>
             <td>${data[i].classifiStaff()}</td>
             <td> 
-            <button type="button" id="btnUpdate" onclick="getUpdate('${data[i].staffId}')"  class="btn btn-light border border-dark" data-target="#myModal" data-toggle="modal"><i class="fa-regular fa-pen-to-square" style="color: #000;"></i></button>   
-            <button type="button" onclick="deleteStaff('${data[i].staffId}')" class="btn btn-danger border border-dark mt-1  "><i class="fa-solid fa-trash-can" style="color: #000;"></i></button>
+            <button type="button" id="btnUpdate" onclick="getUpdate('${
+              data[i].staffId
+            }')"  class="btn btn-light border border-dark" data-target="#myModal" data-toggle="modal"><i class="fa-regular fa-pen-to-square" style="color: #000;"></i></button>   
+            <button type="button" onclick="deleteStaff('${
+              data[i].staffId
+            }')" class="btn btn-danger border border-dark mt-1  "><i class="fa-solid fa-trash-can" style="color: #000;"></i></button>
             </td>
         </tr>`;
   }
@@ -165,7 +169,6 @@ function getUpdate(id) {
   btnCancel.classList.add("bnt", "btn-danger");
   btnCancel.onclick = cancelUpdate;
   document.getElementById("modal-footer").appendChild(btnCancel);
-
 }
 function updateStaff() {
   // cho user edit form -> save
@@ -192,7 +195,7 @@ function updateStaff() {
 
   renderHtml();
   saveLocal();
-  
+
   cancelUpdate();
 }
 
@@ -216,4 +219,114 @@ function findStaffById(id) {
     }
   }
   return -1;
+}
+
+function searchStaff(e) {
+  var keyword = e.target.value.toLowerCase().trim();
+  var result = [];
+
+  for (var i = 0; i < staffList.length; i++) {
+    var staffClasify = staffList[i].classifiStaff().toLowerCase();
+    if (staffClasify.includes(keyword)) {
+      result.push(staffList[i]);
+    }
+  }
+  renderHtml(result);
+}
+
+/** VALIDATION */
+
+// required (return true || false) (tránh user để trống form)
+
+function required(val, config) {
+  if (val > 0) {
+    document.getElementById(config.errorId).innerHTML = "";
+    return true;
+  }
+  document.getElementById(config.errorId).innerHTML = "Vui lòng nhập giá trị";
+  return false;
+}
+
+// min/max - lenght
+
+function lenght(val, config) {
+  if (val.lenght < config.min || val.lenght > config.max) {
+    document.getElementById(
+      config.errorId
+    ).innerHTML = `Độ dài phải từ ${config.min} đến ${config.max}`;
+    return false;
+  }
+  document.getElementById(config.errorId).innerHTML = "";
+  return true;
+}
+
+// pattern : định dạng
+
+function pattern(val, config) {
+  if (config.regexp.test(val)) {
+    document.getElementById(config.errorId).innerHTML = "";
+    return true;
+  }
+  document.getElementById(config.errorId).innerHTML = "Vui lòng nhập lại";
+  return false;
+}
+
+function validateForm() {
+  var id = document.getElementById("tknv").value;
+  var fullName = document.getElementById("name").value;
+  var email = document.getElementById("email").value;
+  var dow = document.getElementById("datepicker").value;
+  var salary = document.getElementById("luongCB").value;
+  var hourOfWork = document.getElementById("gioLam").value;
+  var pass = document.getElementById("password").value;
+
+  var regId = /[0-9]/g;
+  var regName =
+    /^[a-zA-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂẾưăạảấầẩẫậắằẳẵặẹẻẽềềểếỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ\s\W|_]+$/g;
+  var regMail = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+  var regDow = /^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/g;
+  var regSalary = /[0-9]{7,11}/g;
+  var regPass = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/g;
+  var regHourWork = /[0-9]/g;
+
+  var staffIdValid =
+    required(id, { errorId: "tbTKNV" }) &&
+    lenght(id, { errorId: "tbTKNV", min: 3, max: 8 }) &&
+    pattern(id, { errorId: "tbTKNV", regexp: regId });
+  var staffNameValid =
+    required(fullName, { errorId: "tbTen" }) &&
+    pattern(fullName, { errorId: "tbTen", regexp: regName });
+
+  var staffMailValid =
+    required(email, { errorId: "tbEmail" }) &&
+    pattern(email, { errorId: "tbEmail", regexp: regMail });
+
+  var staffDowValid =
+    required(dow, { errorId: "tbNgay" }) &&
+    pattern(dow, { errorId: "tbNgay", regexp: regDow });
+
+  var staffSalaryValid =
+    required(salary, { errorId: "tbLuongCB" }) &&
+    pattern(salary, { errorId: "tbLuongCB", regexp: regSalary });
+
+  var staffPassValid =
+    required(pass, { errorId: "tbMatKhau" }) &&
+    pattern(pass, { errorId: "tbMatKhau", regexp: regPass }) &&
+    lenght(pass, { errorId: "tbMatKhau", min: 8, max: 20 });
+
+  var staffHourWorkValid =
+    required(hourOfWork, { errorId: "tbGiolam" }) &&
+    pattern(hourOfWork, { errorId: "tbGiolam", regexp: regHourWork }) &&
+    lenght(hourOfWork, { errorId: "tbGiolam", min: 1, max: 3 });
+
+  var isFormValid =
+    staffIdValid &&
+    staffNameValid &&
+    staffMailValid &&
+    staffDowValid &&
+    staffSalaryValid &&
+    staffPassValid &&
+    staffHourWorkValid;
+
+  return isFormValid;
 }
