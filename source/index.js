@@ -8,7 +8,10 @@ function checkMode() {
 
 function createStaff() {
   // Dom lấy input
-  if (!validateForm()) return;
+  if (!validateForm()) {
+    // thêm cho ko tắt modal
+    return;
+  }
 
   var id = document.getElementById("tknv").value;
   var fullName = document.getElementById("name").value;
@@ -39,12 +42,11 @@ function createStaff() {
   );
 
   staffList.push(staff);
-
-  console.log(staffList);
-
+  document.getElementById("form-cont").reset();
   renderHtml();
 
   saveLocal();
+  return alert("Thêm thành công");
 }
 
 /** Savelocal */
@@ -74,8 +76,8 @@ function mapData(local) {
       oldStaff.staffId,
       oldStaff.staffName,
       oldStaff.staffEmail,
-      oldStaff.staffPass,
       oldStaff.staffDow,
+      oldStaff.staffPass,
       oldStaff.salary,
       oldStaff.positon,
       oldStaff.hourOfWork
@@ -157,9 +159,11 @@ function getUpdate(id) {
   mode = "update";
   document.getElementById("btnThemNV").innerHTML = "Lưu thay đổi";
   document.getElementById("btnThemNV").classList.add("btn", "btn-info");
-  document.getElementById("btnDong").classList.add("display");
+  document.getElementById("btnDong").classList.add("display-none");
 
   // thêm nút lưu thay đổi và nút hủy
+  if (document.getElementById("btnCancel")) return;
+
   var btnCancel = document.createElement("button");
   btnCancel.type = "button";
   btnCancel.style.borderRadius = "5px";
@@ -171,6 +175,7 @@ function getUpdate(id) {
   document.getElementById("modal-footer").appendChild(btnCancel);
 }
 function updateStaff() {
+  if (!validateForm()) return;
   // cho user edit form -> save
   // DOM lấy input
   var id = document.getElementById("tknv").value;
@@ -186,12 +191,12 @@ function updateStaff() {
   var staff = staffList[index];
   staff.staffId = id;
   staff.staffName = fullName;
+  staff.staffDow = dow;
   staff.staffEmail = email;
   staff.staffPass = pass;
   staff.salary = salary;
   staff.positon = positon;
   staff.hourOfWork = hourOfWork;
-  staff.staffDow = dow;
 
   renderHtml();
   saveLocal();
@@ -203,7 +208,7 @@ function cancelUpdate() {
   mode = "create";
   document.getElementById("btnThemNV").innerHTML = "Thêm người dùng";
   document.getElementById("btnThemNV").classList.remove("btn-info");
-  document.getElementById("btnDong").classList.remove("display");
+  document.getElementById("btnDong").classList.remove("display-none");
   var btnCancel = document.getElementById("btnCancel");
   btnCancel.remove();
   document.getElementById("tknv").disabled = false;
@@ -239,7 +244,7 @@ function searchStaff(e) {
 // required (return true || false) (tránh user để trống form)
 
 function required(val, config) {
-  if (val > 0) {
+  if (val.length > 0) {
     document.getElementById(config.errorId).innerHTML = "";
     return true;
   }
@@ -247,10 +252,10 @@ function required(val, config) {
   return false;
 }
 
-// min/max - lenght
+// min/max - length
 
-function lenght(val, config) {
-  if (val.lenght < config.min || val.lenght > config.max) {
+function length(val, config) {
+  if (val.length < config.min || val.lenght > config.max) {
     document.getElementById(
       config.errorId
     ).innerHTML = `Độ dài phải từ ${config.min} đến ${config.max}`;
@@ -291,8 +296,9 @@ function validateForm() {
 
   var staffIdValid =
     required(id, { errorId: "tbTKNV" }) &&
-    lenght(id, { errorId: "tbTKNV", min: 3, max: 8 }) &&
-    pattern(id, { errorId: "tbTKNV", regexp: regId });
+    length(id, { errorId: "tbTKNV", min: 3, max: 8 });
+  pattern(id, { errorId: "tbTKNV", regexp: regId });
+
   var staffNameValid =
     required(fullName, { errorId: "tbTen" }) &&
     pattern(fullName, { errorId: "tbTen", regexp: regName });
@@ -301,10 +307,6 @@ function validateForm() {
     required(email, { errorId: "tbEmail" }) &&
     pattern(email, { errorId: "tbEmail", regexp: regMail });
 
-  var staffDowValid =
-    required(dow, { errorId: "tbNgay" }) &&
-    pattern(dow, { errorId: "tbNgay", regexp: regDow });
-
   var staffSalaryValid =
     required(salary, { errorId: "tbLuongCB" }) &&
     pattern(salary, { errorId: "tbLuongCB", regexp: regSalary });
@@ -312,18 +314,24 @@ function validateForm() {
   var staffPassValid =
     required(pass, { errorId: "tbMatKhau" }) &&
     pattern(pass, { errorId: "tbMatKhau", regexp: regPass }) &&
-    lenght(pass, { errorId: "tbMatKhau", min: 8, max: 20 });
+    length(pass, { errorId: "tbMatKhau", min: 8, max: 20 });
 
   var staffHourWorkValid =
     required(hourOfWork, { errorId: "tbGiolam" }) &&
     pattern(hourOfWork, { errorId: "tbGiolam", regexp: regHourWork }) &&
-    lenght(hourOfWork, { errorId: "tbGiolam", min: 1, max: 3 });
+    length(hourOfWork, { errorId: "tbGiolam", min: 1, max: 3 });
+
+  document.getElementById("tbTKNV").style.display = "block";
+  document.getElementById("tbTen").style.display = "block";
+  document.getElementById("tbEmail").style.display = "block";
+  document.getElementById("tbLuongCB").style.display = "block";
+  document.getElementById("tbMatKhau").style.display = "block";
+  document.getElementById("tbGiolam").style.display = "block";
 
   var isFormValid =
     staffIdValid &&
     staffNameValid &&
     staffMailValid &&
-    staffDowValid &&
     staffSalaryValid &&
     staffPassValid &&
     staffHourWorkValid;

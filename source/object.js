@@ -47,3 +47,5 @@ function Staff(id, fullName, email, dow, pass, salary, positon, hourOfWork) {
     return rankStaff
   };
 }
+
+

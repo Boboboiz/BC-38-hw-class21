@@ -20,8 +20,11 @@
     <!-- Animate -->
     <!-- <link rel="stylesheet" href="css/animate.css"> -->
     <style>
-      .display {
+      .display-none {
         display: none;
+      }
+      .display-block {
+        display: block;
       }
     </style>
     <!-- My CSS -->
@@ -218,7 +221,7 @@
 				</div> -->
 
           <!-- Modal body -->
-          <div class="modal-body" >
+          <div class="modal-body">
             <form role="form" id="form-cont">
               <div class="form-group">
                 <div class="input-group">
@@ -357,7 +360,7 @@
                   <input
                     type="text"
                     name="gioLam"
-                     id="gioLam"
+                    id="gioLam"
                     class="form-control input-sm"
                     placeholder="Giờ làm"
                   />
@@ -374,12 +377,12 @@
               onclick="checkMode()"
               type="button"
               class="btn btn-success"
+              data-dismiss="modal"
             >
               Thêm người dùng
             </button>
-			
-            <button
 
+            <button
               id="btnDong"
               type="button"
               class="btn btn-danger"
@@ -418,6 +421,13 @@
         });
       });
     </script>
+        <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.min.js"
+        integrity="sha512-OdkysyYNjK4CZHgB+dkw9xQp66hZ9TLqmS2vXaBrftfyJeduVhyy1cOfoxiKdi4/bfgpco6REu6Rb+V2oVIRWg=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+      ></script>
+      <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../source/object.js"></script>
     <script src="../source/index.js"></script>
   </body>
